@@ -1,0 +1,13 @@
+version: '3.4'
+
+services:
+  app:
+    build: .
+    ports:
+    - 5001:5000
+    - 4444:4444
+    volumes:
+    - .:/usr/src/app
+    environment:
+      DEBUG: 1
+    
