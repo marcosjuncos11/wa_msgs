@@ -9,6 +9,9 @@ from src.graphql.schemas.posts import PostObject
 from src.graphql.query.test import Test
 from src.graphql.mutation.auth.register import Register
 from src.graphql.mutation.auth.auth import Auth
+from src.graphql.mutation.auth.refresh import Refresh
+from src.graphql.mutation.auth.token import ProtectedMutation
+from src.graphql.mutation.import_contacts import ImportContactsMutation
 
 # ------------------ Graphql Schemas ------------------
 class CreatePost(graphene.Mutation):
@@ -33,6 +36,9 @@ class Mutation(graphene.ObjectType):
     save_post = CreatePost.Field()
     register = Register.Field()
     auth = Auth.Field()
+    refresh = Refresh.Field()
+    protected = ProtectedMutation.Field()
+    importContacts = ImportContactsMutation.Field()
 
 
 

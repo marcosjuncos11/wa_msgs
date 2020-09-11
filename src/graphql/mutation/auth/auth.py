@@ -1,34 +1,32 @@
+from flask import Flask
 import graphene
-from graphene_sqlalchemy import SQLAlchemyObjectType, SQLAlchemyConnectionField
-from src.config.config import db
+from flask_graphql_auth import (
+    AuthInfoField,
+    GraphQLAuth,
+    get_jwt_identity,
+    get_raw_jwt,
+    create_access_token,
+    create_refresh_token,
+    query_jwt_required,
+    mutation_jwt_refresh_token_required,
+    mutation_jwt_required,
+)
 from src.models.users import User
-from src.models.posts import Post
-from src.graphql.schemas.users import UserObject
-
-from src.graphql.schemas.posts import PostObject
-from src.graphql.query.test import Test
-
-from src.models.auth import Auth as AuthModel
-
-# ------------------ Graphql Schemas ------------------
-
 
 class Auth(graphene.Mutation):
-    class Arguments:        
-        email = graphene.String(required=True)
-        password = graphene.String(required=True)
+    class Arguments(object):
+        username = graphene.String()
+        password = graphene.String()
 
-    token = graphene.String()
+    access_token = graphene.String()
+    refresh_token = graphene.String()
 
-    def mutate(self, info, email, password):
-        try:
-            # fetch the user data
-            user = User.query.filter_by(
-                email=email, password=password
-              ).first()
-            auth = AuthModel()
-            auth_token = auth.encode_auth_token(user.id)                
-            return Auth(auth_token.decode())
-        except Exception as e:
-            print(e)            
-            return Auth('Failed, try again')
+    @classmethod
+    def mutate(cls, _, info, username, password):
+        user = User.query.filter_by(email=username, password=password).first()
+        if not user:
+          return Auth(access_token=None)
+        return Auth(
+            access_token=create_access_token(username),
+            refresh_token=create_refresh_token(username),
+        )

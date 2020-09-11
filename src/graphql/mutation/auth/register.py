@@ -18,11 +18,9 @@ class Register(graphene.Mutation):
         email = graphene.String(required=True)
         password = graphene.String(required=True)
 
-    token = graphene.String()
+    ok = graphene.String()
 
-    def mutate(self, info, email, password):
-        print('init register')
-        print(email)
+    def mutate(self, info, email, password):        
         user = User.query.filter_by(email=email, password=password).first()
         if user:
             return Register('User already exists. Please Log in.')
@@ -35,12 +33,8 @@ class Register(graphene.Mutation):
             # insert the user
             db.session.add(user)
             db.session.commit()
-            # generate the auth token
-            auth = Auth()
-            auth_token = auth.encode_auth_token(user.id)
-            print('auth_token')
-            print(auth_token)
-            return Register(auth_token.decode())
+            # generate the auth token            
+            return Register('User created')
         except Exception as e:                
             return Register('Some error occurred. Please try again.')
         
