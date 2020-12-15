@@ -4,19 +4,24 @@ from flask_graphql_auth import (
     AuthInfoField,
     mutation_header_jwt_required,
 )
+from graphene.types import generic
 
-# class ResponseField(graphene.ObjectType):
-#     message = graphene.String()
+from src.containers.import_contacts import ImportContactsContainer
 
 class ImportContactsMutation(graphene.Mutation):
     class Arguments(object):
-        pass
+        file_name = graphene.String()
 
-    message = graphene.Field(graphene.Boolean)
+    list = generic.GenericScalar()
 
     @classmethod
     @mutation_header_jwt_required
-    def mutate(cls, _, info):
-        return ImportContactsMutation(
-            message=True
-        )
+    def mutate(cls, _, info, file_name):
+        container = ImportContactsContainer()
+        # print('***** 2')
+        service = container.importContactsService()
+        # print('***** 3')
+        params = dict(file_name= file_name)
+        res = service.execute(params)
+        # print(res)
+        return ImportContactsMutation(res)

@@ -38,7 +38,7 @@ class Mutation(graphene.ObjectType):
     auth = Auth.Field()
     refresh = Refresh.Field()
     protected = ProtectedMutation.Field()
-    importContacts = ImportContactsMutation.Field()
+    import_contacts = ImportContactsMutation.Field()
 
 
 
